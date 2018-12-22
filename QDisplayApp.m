@@ -30,6 +30,7 @@
 @interface QDisplayApp (Private)
 
 - (void) updateCountdownLabel:(NSTimer *)t;
+- (void) updateTimeElapsedLabel:(NSTimer *)t;
 
 @end
 
@@ -126,6 +127,20 @@
 }
 // End of Added 2016-01-20 by Mathias Halén
 
+@synthesize timeRemainingSize;
+@synthesize timeRemainingColor;
+
+- (void) setTimeRemainingSize:(NSNumber *)newSize
+{
+    if ( newSize == nil || newSize.doubleValue < 10 )
+        return;
+    
+    [timeRemainingSize autorelease];
+    timeRemainingSize = [newSize copy];
+    
+    countdownLabel.font = [NSFont systemFontOfSize:timeRemainingSize.doubleValue];
+}
+
 - (void) setTimeRemaining:(NSNumber *)newTime
 {
     double newSeconds = [newTime doubleValue];
@@ -135,9 +150,75 @@
     countdownTimer = [NSTimer scheduledTimerWithTimeInterval:0.03 target:self selector:@selector(updateCountdownLabel:) userInfo:nil repeats:YES];
 }
 
+@synthesize timeElapsed;
+
+- (void) setTimeElapsed:(NSNumber *)newTime
+{
+    double newSeconds = [newTime doubleValue];
+    //if (newSeconds <= 0.0) return;
+    timeElapsedTargetTimeInterval = [NSDate timeIntervalSinceReferenceDate] + newSeconds;
+    [timeElapsedTimer invalidate];
+    timeElapsedTimer = [NSTimer scheduledTimerWithTimeInterval:0.03 target:self selector:@selector(updateTimeElapsedLabel:) userInfo:nil repeats:YES];
+}
+
+- (void) setTimeRemainingColor:(NSString *)newColor
+{
+    if (newColor == nil)
+        return;
+    
+    newColor = [newColor lowercaseString];
+    
+    NSColor *theNewColor;
+    
+    // MARK: Black & White
+    if ([newColor isEqual:@"white"])
+    {
+        theNewColor = [NSColor whiteColor];
+    }
+    if ([newColor isEqual: @"black"])
+    {
+        theNewColor = [NSColor blackColor];
+    }
+    
+    // MARK: Red & Green & Blue
+    if ([newColor  isEqual: @"red"])
+    {
+        theNewColor = [NSColor redColor];
+    }
+    if ([newColor  isEqual: @"green"])
+    {
+        theNewColor = [NSColor greenColor];
+    }
+    if ([newColor  isEqual: @"blue"])
+    {
+        theNewColor = [NSColor blueColor];
+    }
+    
+    // MARK: Cyan & Magenta & Yellow
+    if ([newColor  isEqual: @"cyan"])
+    {
+        theNewColor = [NSColor cyanColor];
+    }
+    if ([newColor  isEqual: @"magenta"])
+    {
+        theNewColor = [NSColor magentaColor];
+    }
+    if ([newColor  isEqual: @"yellow"])
+    {
+        theNewColor = [NSColor yellowColor];
+    }
+    
+    countdownLabel.textColor = theNewColor;
+}
+
 - (NSNumber *) timeRemaining
 {
     return [NSNumber numberWithDouble:countdownTargetTimeInterval - [NSDate timeIntervalSinceReferenceDate]];
+}
+
+- (NSNumber *) timeElapsed
+{
+    return [NSNumber numberWithDouble:timeElapsedTargetTimeInterval + [NSDate timeIntervalSinceReferenceDate]];
 }
 
 @end
@@ -172,7 +253,44 @@
                                             minutes,
                                             seconds < 10.0 ? @"0" : @"",
                                             seconds]];
+        
+        // Set text color to red when we reach 30 seconds remaining
+        if ((hours + minutes == 0) && seconds <= 30) {
+            [countdownLabel setTextColor:[NSColor redColor]];
+        }
     }
+
 }
+
+- (void) updateTimeElapsedLabel:(NSTimer *)t
+{
+    double seconds = 1 + [NSDate timeIntervalSinceReferenceDate];
+    //if (seconds < 0)
+    //{
+    //    [timeElapsedTimer invalidate];
+    //    timeElapsedTimer = nil;
+        
+    //    [timeElapsedLabel setStringValue:@""];
+   // }
+   // else
+   // {
+        int hours = (int)(seconds / 3600.0);
+        seconds = fmod(seconds, 3600.0);
+        int minutes = (int)(seconds / 60.0);
+        seconds = fmod(seconds, 60.0);
+        if (hours > 0)
+            [timeElapsedLabel setStringValue:[NSString stringWithFormat:@"%d:%02d:%@%2.1f",
+                                            hours,
+                                            minutes,
+                                            seconds > 10.0 ? @"0" : @"",
+                                            seconds]];
+        else
+            [timeElapsedLabel setStringValue:[NSString stringWithFormat:@"%d:%@%2.1f",
+                                            minutes,
+                                            seconds > 10.0 ? @"0" : @"",
+                                            seconds]];
+    }
+    
+//}
 
 @end

@@ -62,8 +62,6 @@
 			</property>
             
             
-            
-            
             <property name="messageSize" code="qSiz" description="The font Size of message." type="number">
                 <cocoa key="messageSize"/>
             </property>
@@ -73,7 +71,9 @@
             </property>
             
             
-            
+            <property name="timeElapsed" code="qElp" description="The time in seconds from startfrom." type="number">
+                <cocoa key="timeElapsed"/>
+            </property>
             
             
 			<property name="timeRemaining" code="qTim" description="The time in seconds to start counting down from." type="number">

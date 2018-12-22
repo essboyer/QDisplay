@@ -34,16 +34,25 @@
     IBOutlet NSTextField *countdownLabel;
     NSTimer *countdownTimer;
     double countdownTargetTimeInterval;
+    IBOutlet NSTextField *timeElapsedLabel;
+    NSTimer *timeElapsedTimer;
+    double timeElapsedTargetTimeInterval;
     
     NSString *message;
     NSNumber *messageSize;
     NSString *messageColor;
+    NSString *timeRemainingColor;
+    NSNumber *timeRemainingSize;
+    NSNumber *timeElapsed;
 }
 
 @property (nonatomic, copy) NSString *message;
 @property (nonatomic, copy) NSNumber *messageSize;
 @property (nonatomic, copy) NSString *messageColor;
 @property (nonatomic, copy) NSNumber *timeRemaining;
+@property (nonatomic, copy) NSNumber *timeRemainingSize;
+@property (nonatomic, copy) NSString *timeRemainingColor;
+@property (nonatomic, copy) NSNumber *timeElapsed;
 @property (nonatomic, retain) IBOutlet NSWindow *window;
 
 @end
